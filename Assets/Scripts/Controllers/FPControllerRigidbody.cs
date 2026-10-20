@@ -8,29 +8,43 @@ public class FPControllerRigidbody : MonoBehaviour
     public Transform pivot;
     public float jumpForce = 6;
 
+    [Header("STAIRS")]
+    public bool OnStairs = false;
+    public float climbSpeed = 3f;
+
     //Guarda la rotacion en el eje X que necesita el pivote para mirar arriba y abajo
     private float pivotRotationX;
 
     //Almacenar el input del jugador
-    private Vector3 input;
+    public Vector3 input;
 
     private Rigidbody rb;
-    private GroundChecker groundChecker;
+    public GroundChecker groundChecker;
+
+    private float currentSpeed;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         groundChecker = GetComponent<GroundChecker>();
+        currentSpeed = movementSpeed;
     }
 
     void Update()
     {
-        //Guardar el valor de movimiento en los ejes X Z
-        input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
-        //Hay que cambiar el vector de input para que sea relativo al transform del jugador y siempre
-        //se mueva según hacia donde esta mirando y no relativo al mundo
-        input = transform.TransformDirection(input);
+        if(OnStairs == true)
+        {
+            input = new Vector3(0, Input.GetAxisRaw("Vertical"), 0);
+        }
+        else
+        {
+            //Guardar el valor de movimiento en los ejes X Z
+            input = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+            //Hay que cambiar el vector de input para que sea relativo al transform del jugador y siempre
+            //se mueva según hacia donde esta mirando y no relativo al mundo
+            input = transform.TransformDirection(input);
+        }
 
         if (Input.GetButtonDown("Jump") && groundChecker.IsGrounded == true)
         {
@@ -52,9 +66,19 @@ public class FPControllerRigidbody : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 movement = input.normalized * movementSpeed;
-        //Mantener la velocity Y original para no reventar la gravedad
-        movement.y = rb.linearVelocity.y;
+        Vector3 movement = input.normalized * currentSpeed;
+        if(OnStairs == false)
+        {
+            //Mantener la velocity Y original para no reventar la gravedad
+            movement.y = rb.linearVelocity.y;
+        }
         rb.linearVelocity = movement;
+    }
+
+    public void Climb(bool onStairs)
+    {
+        OnStairs = onStairs;
+        currentSpeed = OnStairs == true ? climbSpeed : movementSpeed;
+        rb.useGravity = !onStairs;
     }
 }
