@@ -14,6 +14,8 @@ public class PickupDetector : MonoBehaviour
     [SerializeField] private ItemPickup detectedItem;
     //Referencia al objeto vacio al que se emparentan los objetos recogidos
     [SerializeField] private Transform pickupPoint;
+    //Fuerza con la que se lanzan los objetos
+    [SerializeField] private float throwForce = 20;
 
     //Rayo calculado por la camara hacia el centro de la pantalla
     private Ray ray;
@@ -25,6 +27,25 @@ public class PickupDetector : MonoBehaviour
 
     void Update()
     {
+        //Si se pulsa la tecla de interactuar Y LLEVAMOS UN OBJETO EN LA MANO, se suelta
+        if (Input.GetButtonDown("Interact") && itemInHand != null)
+        {
+            //Soltar el objeto y cambiar la variable a NULL
+            itemInHand.Drop();
+            itemInHand = null;
+        }
+
+        //Si se pulsa la tecla de lanzar y llevamos un objeto en la mano
+        //Usamos este eje para que funcione con el gatillo R2 de un mando
+        if (Input.GetAxisRaw("Shoot") > 0.1f && itemInHand != null)
+        {
+            //Lanzar el objeto y cambiar la variable a NULL
+            itemInHand.Throw(transform.forward * throwForce);
+            itemInHand = null;
+        }
+
+        Debug.Log(Input.GetAxisRaw("Shoot"));
+
         //Si se pulsa la tecla de interactuar Y hay un objeto detectado delante
         if (Input.GetButtonDown("Interact") && detectedItem != null && itemInHand == null)
         {
@@ -35,6 +56,7 @@ public class PickupDetector : MonoBehaviour
             //Llamar a la funcion del objeto para cogerlo
             itemInHand.PickUp(pickupPoint);
         }
+
         //Detectar objetos siempre y cuando no tengamos ya uno en la mano
         if(itemInHand == null)
         {
