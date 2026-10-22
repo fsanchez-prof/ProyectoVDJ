@@ -44,8 +44,6 @@ public class PickupDetector : MonoBehaviour
             itemInHand = null;
         }
 
-        Debug.Log(Input.GetAxisRaw("Shoot"));
-
         //Si se pulsa la tecla de interactuar Y hay un objeto detectado delante
         if (Input.GetButtonDown("Interact") && detectedItem != null && itemInHand == null)
         {

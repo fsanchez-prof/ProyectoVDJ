@@ -2,18 +2,20 @@ using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
+    //La palabra protected funciona como private pero si que da acceso a los scripts que heredan de éste
     //Referencia al collider para poder activarlo y desactivarlo
-    private Collider col;
-    private Rigidbody rb;
+    protected Collider col;
+    protected Rigidbody rb;
 
-    void Start()
+    protected void Start()
     {
         col = GetComponent<Collider>();
         rb = GetComponent<Rigidbody>();
     }
 
     //Esta funcion se llama por el PickupDetector. Tiene que ser pública o no dará acceso
-    public void PickUp(Transform point)
+    //Añadimos VIRTUAL para que se le pueda hacer OVERRIDE desde las clases que hereden de ésta
+    public virtual void PickUp(Transform point)
     {
         //Emparentar el objeto a la mano del jugador
         transform.SetParent(point);
