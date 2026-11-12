@@ -41,7 +41,7 @@ public class ItemPickup : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Pickup");
     }
 
-    public void Throw(Vector3 force)
+    public virtual void Throw(Vector3 force)
     {
         //Soltar el objeto antes de lanzarlo
         Drop();
