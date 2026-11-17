@@ -14,6 +14,9 @@ public class ColorPedestal : MonoBehaviour
     //El objeto que se le haya puesto encima (si lo hay)
     private ColorItem itemOnTop;
 
+    //El puzzle al que pertenece este pedestal
+    [HideInInspector] public ColorPuzzle assignedPuzzle;
+
     void Start()
     {
         StartCoroutine(DetectCrt());
@@ -45,12 +48,24 @@ public class ColorPedestal : MonoBehaviour
                 isComplete = itemOnTop.colorVariant == colorVariant;
                 //Mover el objeto colocado
                 itemOnTop.Place(transform.position + checkBoxPosition);
+
+                //Avisar al puzzle de que se ha completado este pedestal
+                if(isComplete == true)
+                {
+                    assignedPuzzle.CompletePedestal();
+                }
             }
         }
         //Si no detecta nada pero tenía un objeto encima, es porque se ha quitado
         else if(itemOnTop != null)
         {
             itemOnTop = null;
+            //Cuando se quita el objeto, si estaba completo, también se elimina del puzzle
+            if (isComplete == true)
+            {
+                assignedPuzzle.RemovePedestal();
+            }
+
             isComplete = false;
         }
     }
